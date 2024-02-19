@@ -3,26 +3,26 @@ import numpy as np
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-#import boto3
-#from smart_open import open
-from glob import glob
+import boto3
+from smart_open import open
+#from glob import glob
 
 st.title('Blue Physics Analysis')
 
-#s3 = boto3.client('s3')
+s3 = boto3.client('s3')
 
-#response = s3.list_objects_v2(Bucket = 'indradas')
+response = s3.list_objects_v2(Bucket = 'bluephysicslapaz')
 
-#filenames = [file['Key'] for file in response.get('Contents', [])][1:]
+filenames = [file['Key'] for file in response.get('Contents', [])][1:]
 
-filenames = glob('lapaz*.csv')
+#filenames = glob('lapaz*.csv')
 
 dates = []
 notes = []
 
 for filename in filenames:
-    #with open (f's3://indradas/{filename}') as filenow:
-    with open (filename) as filenow:
+    with open (f's3://bluephysicslapaz/{filename}') as filenow:
+    #with open (filename) as filenow:
         datenow = filenow.readline()[11:]
         dates.append(datenow)
         notenow = filenow.readline()[7:]
@@ -42,9 +42,9 @@ filenow = st.selectbox('Select File to Analyze', dffiles.file)
 #Take a quick look at the raw data
 @st.cache_data
 def read_dataframe(file):
-    #path = f's3://indradas/{file}'
-    #df = pd.read_csv(path, skiprows = 4)
-    df = pd.read_csv(file, skiprows = 4)
+    path = f's3://bluephysicslapaz/{file}'
+    df = pd.read_csv(path, skiprows = 4)
+    #df = pd.read_csv(file, skiprows = 4)
     return df
 
 dforig = read_dataframe(filenow)
